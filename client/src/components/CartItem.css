@@ -1,0 +1,8 @@
+.cartItem_image{
+    height: 15rem;
+    object-fit: contain;
+}
+img{
+    height:15rem;
+    object-fit: contain;
+}

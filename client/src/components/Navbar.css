@@ -1,0 +1,34 @@
+/* Navbar.css */
+.navbar {
+    background-color: #f2f2f2;
+    padding: 10px;
+    height: 4em;
+    font-family: "Poppins", Tahoma, sans-serif;
+  }
+  
+  .navbar__list {
+    list-style-type: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .navbar__item {
+    margin: 0 10px;
+  }
+
+  .navbar__item .active {
+    color: #1a9df8;
+    font-weight: 600;
+  }
+  
+  .navbar__link {
+    text-decoration: none;
+    color: #333;
+    padding: 5px 10px;
+  }
+  
+  .navbar__link:hover {
+    background-color: #ddd;
+  }
+  

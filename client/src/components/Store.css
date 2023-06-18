@@ -1,0 +1,14 @@
+.store-container {
+    display: grid;
+    gap: 1em;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    padding: 2em 3em 5em 3em;
+}
+
+.heading {
+    text-align: center;
+    font-size: 2em;
+    font-weight: 600;
+    margin: 1em 0;
+    font-family: 'Poppins', sans-serif;
+}
