@@ -74,6 +74,7 @@ const Cart = () => {
         </div>
       </button>
     </section>
+  
   );
 };
 

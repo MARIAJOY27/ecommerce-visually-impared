@@ -10,7 +10,7 @@ export function useCart() {
 
 export function CartProvider({ children }) {
   const [cart, setCart] = useLocalStorage("cart", [])
-  const [showCartItems, setShowCartItems] = useState(false)
+  const [showCartItems, setShowCartItems] = useState(true)
   const formattedCart = cart.map(entry => {
     return { ...entry, item: storeItems.find(item => item.id === entry.itemId) }
   })

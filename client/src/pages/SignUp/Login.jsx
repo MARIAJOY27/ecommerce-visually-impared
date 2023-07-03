@@ -1,66 +1,114 @@
-import React, { useState, useContext, useRef } from 'react'
-import {useNavigate, Link} from 'react-router-dom'
-import axios from 'axios'
-import { AuthContext } from '../../context/AuthContext'
-import { BASE_URL } from '../../util/constant'
-import './style.css'
+import React, { useState, useContext, useRef, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
+import { AuthContext } from '../../context/AuthContext';
+import { BASE_URL } from '../../util/constant';
+import annyang from 'annyang';
+import { BsMicFill } from 'react-icons/bs';
+import './style.css';
 
 const SignUp = () => {
-    const [msg, setMsg] = useState('');
-    const { setUser } = useContext(AuthContext);
-    const submitRef = useRef();
-    const navigate = useNavigate();
+  const [msg, setMsg] = useState('');
+  const [recognizedText, setRecognizedText] = useState('');
+  const { setUser } = useContext(AuthContext);
+  const submitRef = useRef();
+  const navigate = useNavigate();
 
-    const handleLogin = async (e) => {
-        e.preventDefault();
-        setMsg('');
+  useEffect(() => {
+    if (!annyang) {
+      console.log('Speech recognition is not supported in your browser.');
+    } else {
+      const commands = {
+        'username is *username': (username) => {
+          const usernameInput = document.getElementById('exampleUsername');
+          if (usernameInput) {
+            const trimmedUsername = username.trim().replace(/\.$/, '');
+            usernameInput.value = trimmedUsername;
+          }
+        },
+        'password is *password': (password) => {
+          const passwordInput = document.getElementById('examplePassword');
+          if (passwordInput) {
+            const trimmedPassword = password.trim().replace(/\.$/, '');
+            passwordInput.value = trimmedPassword;
+          }
+        },
+        login: () => {
+          const form = document.getElementById('loginForm');
+          if (form) {
+            setRecognizedText('Login');
+            submitRef.current.disabled = false; // Enable the button
+          }
+        },
+      };
 
-        const username = e.target.elements[0].value;
-        const password = e.target.elements[1].value;
+      annyang.addCommands(commands);
+      annyang.start();
 
+      return () => {
+        annyang.removeCommands(Object.keys(commands));
+        annyang.abort();
+      };
+    }
+  }, []);
 
-        if (username.trim() === "" || password.trim() === "")
-            return alert("provide credentials")
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setMsg('');
 
-        submitRef.current.disabled = true;
-        submitRef.current.innerHTML = "Please wait...";
+    const username = e.target.elements.exampleUsername.value;
+    const password = e.target.elements.examplePassword.value;
 
-        try {
-            submitRef.current.disabled = true;
-            submitRef.current.innerHTML = "Please wait...";
-
-            let res = await axios.post(`${BASE_URL}/login`, { username, password })
-            setUser(res.data.user);
-            localStorage.setItem("token", res.data.token);
-            navigate("/", {replace:true})
-        } catch (err) {
-            setMsg(err.response.data.message)
-            submitRef.current.disabled = false;
-            submitRef.current.innerHTML = "Sign Up";
-            e.target.reset();
-        }
+    if (username.trim() === '' || password.trim() === '') {
+      return alert('Please provide credentials.');
     }
 
-    return (
-        <div className="form-container">
-            <form onSubmit={handleLogin}>
-                <h1>Login Here</h1>
-                <div className="input-controls-signup-login">
-                    <label>Username</label>
-                    <input type="text" required />
-                </div>
-                <div className="input-controls-signup-login">
-                    <label>Password</label>
-                    <input type="password" required />
-                </div>
-                <p className="error-message">{msg}</p>
-                <div className="input-controls-signup-login">
-                    <button ref={submitRef}>Login</button>
-                </div>
-                <p className='signup-login-link'>New User? <Link to="/signup">Sign up</Link></p>
-            </form>
-        </div>
-    )
-}
+    submitRef.current.disabled = true;
+    submitRef.current.innerHTML = 'Please wait...';
 
-export default SignUp
+    try {
+      let res = await axios.post(`${BASE_URL}/login`, { username, password });
+      setUser(res.data.user);
+      localStorage.setItem('token', res.data.token);
+      navigate('/', { replace: true });
+    } catch (err) {
+      setMsg(err.response.data.message);
+      submitRef.current.disabled = false;
+      submitRef.current.innerHTML = 'Login';
+      e.target.reset();
+    }
+  };
+
+  return (
+    <div className="form-container">
+      <form id="loginForm" onSubmit={handleLogin}>
+        <h1>Login Here</h1>
+        <div className="input-controls-signup-login">
+          <label>Username</label>
+          <input id="exampleUsername" type="text" required />
+        </div>
+        <div className="input-controls-signup-login">
+          <label>Password</label>
+          <input id="examplePassword" type="password" required />
+        </div>
+        <p className="error-message">{msg}</p>
+        <div className="input-controls-signup-login">
+          <button ref={submitRef} >Login</button> {/* Button initially disabled */}
+        </div>
+        <p className="signup-login-link">
+          New User? <Link to="/signup">Sign up</Link>
+        </p>
+      </form>
+      <div className="microphone-container">
+        <BsMicFill
+          className="microphone-icon"
+          onClick={() => annyang.trigger('login')}
+        />
+      </div>
+      {/* Display the recognized text on the screen
+      {recognizedText && <p>Recognized Text: {recognizedText}</p>} */}
+    </div>
+  );
+};
+
+export default SignUp;

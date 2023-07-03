@@ -9,6 +9,9 @@ import { CartProvider } from './context/CartContext';
 import CheckoutForm from './components/CheckoutForm';
 // import GoogleSignIn from './components/Login';
 
+
+
+
 // new components
 import SignUp from './pages/SignUp/SignUp';
 import Login from './pages/SignUp/Login'
@@ -19,6 +22,7 @@ import axios from 'axios';
 
 function Home() {
   const {user, setUser} = useContext(AuthContext);
+  
   useEffect(() => {
     getUser();
   }, [user])
@@ -49,8 +53,10 @@ function Home() {
           <Navbar />
           {user && <Cart />}
           <Routes>
-            <Route path="/" element={<Store items={storeItems} />} />
+            <Route exact path="/" element={<Store items={storeItems} />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/cart" element={<Cart />} />
+
             <Route path="/signup" element={<SignUp />} />
             <Route path="/checkout" element={<CheckoutForm />} />
             <Route path="/about" element={<About />} />

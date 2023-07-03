@@ -22,7 +22,14 @@ const Navbar = () => {
           <li className="navbar__item">
           <NavLink to="/login" className="navbar__link">Login</NavLink>
         </li>
+        
         }
+          {user && <li className="navbar__item">
+            <button className = "bg-btn-custom bg-white"  onClick={()=>{
+              localStorage.removeItem('token')
+              window.location.pathname='/login'
+              }}>Logout</button>
+        </li>} 
       </ul>
     </nav>
   );

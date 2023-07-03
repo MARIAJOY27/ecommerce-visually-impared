@@ -24,13 +24,16 @@ export default function useAlan() {
     clearCart
   } = useCart()
 
+
   const openCart = useCallback(() => {
     if (isCartEmpty) {
       alanInstance.playText("You have no items in your cart")
     } else {
       alanInstance.playText("Opening cart")
+     
       setShowCartItems(true)
-    }
+      window.location.pathname="/cart"
+          }
   }, [alanInstance, isCartEmpty, setShowCartItems])
 
   const closeCart = useCallback(() => {
